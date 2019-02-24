@@ -6,31 +6,33 @@ trait EventTrait {
 
     protected $listeners = [];
 
+    private function isStatic(array $handler)
+    {
+        $method = new \ReflectionMethod($handler[0], $handler[1]);
+        return $method->isStatic();
+    }
+
     public function on(string $eventName, $eventHandler, int $priority = 100)
     {
         if (!is_callable($eventHandler)) {
             throw new Exception\InvalidHandler;
-        } else {
-            // Prevents calling a non-static method as if it was static!
-            // It prevents errors and is a desireble behavior.
-            if (is_array($eventHandler) and is_string($eventHandler[0]) and is_string($eventHandler[1])) {
-                $method = new \ReflectionMethod($eventHandler[0], $eventHandler[1]);
-                if (!$method->isStatic()) {
-                    throw new Exception\InvalidHandler;
-                }
-            }
+        } 
+        // Prevents calling a non-static method as if it was static!
+        // It prevents errors and is a desireble behavior.
+        if (is_array($eventHandler) and is_string($eventHandler[0]) and is_string($eventHandler[1]) and !$this->isStatic($eventHandler)) {
+            throw new Exception\InvalidHandler;
         }
+
         if (!isset($this->listeners[$eventName])) { // It's the first listener, so assume it's sorted!
-            $this->listeners[$eventName] = [
-                'sorted' => true,
-                'handlers' => [$eventHandler],
-                'priority' => [$priority]
-            ];
+            $this->listeners[$eventName]['sorted'] = true;
         } else {
-            $this->listeners[$eventName]['handlers'][] = $eventHandler;
-            $this->listeners[$eventName]['priority'][] = $priority;
             $this->listeners[$eventName]['sorted'] = false;
         }
+
+        $this->listeners[$eventName]['handlers'][] = $eventHandler;
+        $this->listeners[$eventName]['priority'][] = $priority;
+                
+
     }
     
 

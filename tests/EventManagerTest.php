@@ -17,9 +17,9 @@ final class EventManagerTest extends TestCase
     }
 
     /**
-     * @covers Argon\Event\EventManager::on
-     * @covers Argon\Event\EventManager::fire
-     * @covers Argon\Event\EventManager::getListeners
+     * @covers Argon\Event\EventTrait::on
+     * @covers Argon\Event\EventTrait::fire
+     * @covers Argon\Event\EventTrait::getListeners
      */
     public function testCanRegisterAnEventListenerAndFireAnEvent()
     {
@@ -34,9 +34,9 @@ final class EventManagerTest extends TestCase
 
     /**
      * @depends testCanRegisterAnEventListenerAndFireAnEvent
-     * @covers Argon\Event\EventManager::removeAllListeners
-     * @covers Argon\Event\EventManager::fire
-     * @covers Argon\Event\EventManager::getListeners
+     * @covers Argon\Event\EventTrait::removeAllListeners
+     * @covers Argon\Event\EventTrait::fire
+     * @covers Argon\Event\EventTrait::getListeners
      */
     public function testCanRemoveAllListenersOfAnEvent()
     {
@@ -48,10 +48,10 @@ final class EventManagerTest extends TestCase
     }
 
     /**
-     * @covers Argon\Event\EventManager::removeAllListeners
-     * @covers Argon\Event\EventManager::on
-     * @covers Argon\Event\EventManager::fire
-     * @covers Argon\Event\EventManager::getListeners
+     * @covers Argon\Event\EventTrait::removeAllListeners
+     * @covers Argon\Event\EventTrait::on
+     * @covers Argon\Event\EventTrait::fire
+     * @covers Argon\Event\EventTrait::getListeners
      */
     public function testListenersOfSamePriorityAreCalledInTheOrderTheyAreDefined()
     {
@@ -72,10 +72,10 @@ final class EventManagerTest extends TestCase
     }
 
     /**
-     * @covers Argon\Event\EventManager::removeAllListeners
-     * @covers Argon\Event\EventManager::on
-     * @covers Argon\Event\EventManager::fire
-     * @covers Argon\Event\EventManager::getListeners
+     * @covers Argon\Event\EventTrait::removeAllListeners
+     * @covers Argon\Event\EventTrait::on
+     * @covers Argon\Event\EventTrait::fire
+     * @covers Argon\Event\EventTrait::getListeners
      */
     public function testListenersOfDifferentPriorityAreSortedByTheirPriorityFromLowToHigh()
     {
@@ -101,8 +101,9 @@ final class EventManagerTest extends TestCase
     }
 
     /**
-     * @covers Argon\Event\EventManager::on
+     * @covers Argon\Event\EventTrait::on
      * @covers Argon\Event\Exception\InvalidHandler
+     * @covers Argon\Event\EventTrait::isStatic
      */
     public function testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
     {
@@ -112,7 +113,7 @@ final class EventManagerTest extends TestCase
 
 
     /**
-     * @covers Argon\Event\EventManager::on
+     * @covers Argon\Event\EventTrait::on
      * @covers Argon\Event\Exception\InvalidHandler
      */
     public function testUsingANonCallableHandlerGeneratesAnException()
@@ -122,9 +123,9 @@ final class EventManagerTest extends TestCase
     }
 
     /**
-     * @covers Argon\Event\EventManager::on
-     * @covers Argon\Event\EventManager::fire
-     * @covers Argon\Event\EventManager::getListeners
+     * @covers Argon\Event\EventTrait::on
+     * @covers Argon\Event\EventTrait::fire
+     * @covers Argon\Event\EventTrait::getListeners
      */
     public function testReturningFalseFromAnEventHandlerStopsTheExecutionOfOtherListeners()
     {
