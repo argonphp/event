@@ -2,5 +2,6 @@
 
 namespace Argon\Event;
 
-interface EventInterface {
+interface EventInterface
+{
 }

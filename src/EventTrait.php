@@ -2,8 +2,8 @@
 
 namespace Argon\Event;
 
-trait EventTrait {
-
+trait EventTrait
+{
     protected $listeners = [];
 
     private function isStatic(array $handler)
@@ -16,7 +16,7 @@ trait EventTrait {
     {
         if (!is_callable($eventHandler)) {
             throw new Exception\InvalidHandler;
-        } 
+        }
         // Prevents calling a non-static method as if it was static!
         // It prevents errors and is a desireble behavior.
         if (is_array($eventHandler) and is_string($eventHandler[0]) and is_string($eventHandler[1]) and !$this->isStatic($eventHandler)) {
@@ -31,8 +31,6 @@ trait EventTrait {
 
         $this->listeners[$eventName]['handlers'][] = $eventHandler;
         $this->listeners[$eventName]['priority'][] = $priority;
-                
-
     }
     
 
@@ -75,5 +73,4 @@ trait EventTrait {
             unset($this->listeners[$eventName]);
         }
     }
-
 }

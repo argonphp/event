@@ -7,5 +7,5 @@ use Argon\Event\EventInterface;
 
 class EventManager implements EventInterface
 {
-	use EventTrait;
+    use EventTrait;
 }
