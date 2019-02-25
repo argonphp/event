@@ -3,9 +3,8 @@
 namespace Argon\Event;
 
 use Argon\Event\EventTrait;
-use Argon\Event\EventInterface;
 
-class EventManager implements EventInterface
+final class EventManager
 {
     use EventTrait;
 }
