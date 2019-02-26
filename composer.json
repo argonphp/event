@@ -1,6 +1,7 @@
 {
     "name": "argon/event",
     "description": "Library for event-based development in PHP",
+    "license": "MIT",
     "require": {
         "php": "^7.0"
     },
