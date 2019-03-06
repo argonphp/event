@@ -16,7 +16,7 @@ The package can be easly installed using composer, with the following command:
 
 ## Getting started (basic)
 
-The most basic way of usin *Argon/Event* is to create a new instance of **EventManger** and using it. The code bellow shows how it can be done:
+The most basic way of using *Argon/Event* is to create a new instance of **EventManger** and using it. The code bellow shows how it can be done:
 
 ```php
 <?php
@@ -66,56 +66,3 @@ $myEventManager->fire('eventName');
 ```
 
 As you can see, using the **EventTrait** is possible to incorporate all the behavior of the EventManager inside your own class.
-
-## API
-
-### EventManager::on( string $eventName, mixed $eventHandler, int $priority = 100)
-
-Install an event listener for the event **$eventName** with the priority **$priority**.
-
-The handlers are sorted by their priority from lower to higher. Every number is acceptable as a priority even the negative ones. If all the handlers have the same priority they are considered sorted and are evoked in the order that they are defined. If an event handler returns **false** the chain of handlers for that event is stoped.
-
-The parameter **$eventHandler** is anything valid for the function [is_callable()](http://php.net/manual/en/function.is-callable.php). There are four general forms for the **$eventHandler** parameter:
-
-1. **Calling a static method of a given class**
-    ```php
-    $eventManager->on('eventName', ['className', 'classMethod']);
-    ```
-2. **Calling a public method of an instantiated class**
-    ```php
-    $instance = new SomeClass();
-    $eventManager->on('eventName', [$instance, 'instanceMethodName']);
-    ```
-3. **Using an anonymous function (closure)**
-    ```php
-    $eventManager->on('eventName', function() {
-        // Some code...
-    });
-    ```
-4. **Using a string**
-This is a variant of the first alternative, and causes the same result, calling a static method of a given class.
-    ```php
-    $eventManager->on('eventName', 'MyClass::myStaticMethod');
-    ```
-### EventManager::fire(string $eventName, array $argumentsForHandler = [])
-
-Trigger an event with the name **$eventName** and pass the array **$argumentsForHandler** for every event handler that is called.
-
-Example:
-```php
-$eventManager = new EventManager();
-$eventManager->on('hello', function() {
-    echo "Hello ";
-});
-$eventManager->on('hello', function($name) {
-    echo "$name!";
-});
-$eventManager->fire('hello', ['World']);
-```
-This will produce the output: 
-    
-    Hello World!
-
-### EventManager::removeAllListeners(string $eventName)
-
-Removes all event listeners of the event **$eventName**.
