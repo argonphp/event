@@ -14,15 +14,15 @@ trait EventTrait
 
     /**
      * Install an event listener for the event $eventName with the priority $priority.
-     * 
+     *
      * The handlers are sorted by their priority from lower to higher. Every number is acceptable as a priority even the
-     * negative ones. If all the handlers have the same priority they are considered sorted and are evoked in the order 
+     * negative ones. If all the handlers have the same priority they are considered sorted and are evoked in the order
      * that they are defined. If an event handler returns **false** the chain of handlers for that event is stoped.
-     * 
+     *
      * The parameter **$eventHandler** is anything valid for the function [is_callable()](http://php.net/manual/en/function.is-callable.php).
-     * There are four general forms for the **$eventHandler** 
+     * There are four general forms for the **$eventHandler**
      * parameter:
-     * 
+     *
      * 1. **Calling a static method of a given class**
      *     ```php
      *     $eventManager->on('eventName', ['className', 'classMethod']);
@@ -58,12 +58,8 @@ trait EventTrait
             throw new Exception\InvalidHandler;
         }
 
-        if (!isset($this->listeners[$eventName])) { // It's the first listener, so assume it's sorted!
-            $this->listeners[$eventName]['sorted'] = true;
-        } else {
-            $this->listeners[$eventName]['sorted'] = false;
-        }
-
+        // If it's the first listener, assume it's sorted!
+        $this->listeners[$eventName]['sorted'] = ! isset($this->listeners[$eventName]);
         $this->listeners[$eventName]['handlers'][] = $eventHandler;
         $this->listeners[$eventName]['priority'][] = $priority;
     }
@@ -75,12 +71,8 @@ trait EventTrait
             return [];
         }
 
-        // If all the listeners have the same priority assume it is sorted!
-        if (count(array_unique($this->listeners[$eventName]['priority'])) === 1) {
-            $this->listeners[$eventName]['sorted'] = true;
-        } else {
-            $this->listeners[$eventName]['sorted'] = false;
-        }
+        // If all the listeners have the same priority, assume it's sorted!
+        $this->listeners[$eventName]['sorted'] = (count(array_unique($this->listeners[$eventName]['priority'])) === 1);
 
         if (!$this->listeners[$eventName]['sorted']) {
             \array_multisort($this->listeners[$eventName]['priority'], SORT_ASC, $this->listeners[$eventName]['handlers']);
@@ -92,7 +84,7 @@ trait EventTrait
 
     /**
      * Trigger an event with the name $eventName and pass the array $argumentsForHandler for every event handler that is called.
-     * 
+     *
      * Example:
      * ```php
      * $eventManager = new EventManager();
@@ -104,13 +96,13 @@ trait EventTrait
      * });
      * $eventManager->fire('hello', ['World']);
      * ```
-     * This will produce the output: 
-     *     
+     * This will produce the output:
+     *
      *     Hello World!
      *
      * @param string $eventName
      * @param array $argumentsForHandler
-     */ 
+     */
     public function fire(string $eventName, array $argumentsForHandler = [])
     {
         foreach ($this->getListeners($eventName) as $listener) {
