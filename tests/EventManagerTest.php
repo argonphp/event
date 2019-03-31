@@ -18,8 +18,8 @@ final class EventManagerTest extends TestCase
 
     /**
      * @covers Argon\Event\EventTrait::on
-     * @covers Argon\Event\EventTrait::fire
-     * @covers Argon\Event\EventTrait::getListeners
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
      */
     public function testCanRegisterAnEventListenerAndFireAnEvent()
     {
@@ -29,29 +29,29 @@ final class EventManagerTest extends TestCase
             echo "event";
         });
 
-        $this->event->fire('event');
+        $this->event->trigger('event');
     }
 
     /**
      * @depends testCanRegisterAnEventListenerAndFireAnEvent
-     * @covers Argon\Event\EventTrait::removeAllListeners
-     * @covers Argon\Event\EventTrait::fire
-     * @covers Argon\Event\EventTrait::getListeners
+     * @covers Argon\Event\EventTrait::off
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
      */
     public function testCanRemoveAllListenersOfAnEvent()
     {
         $this->expectOutputString('');
         
-        $this->event->removeAllListeners('event');
+        $this->event->off('event');
 
-        $this->event->fire('event');
+        $this->event->trigger('event');
     }
 
     /**
-     * @covers Argon\Event\EventTrait::removeAllListeners
+     * @covers Argon\Event\EventTrait::off
      * @covers Argon\Event\EventTrait::on
-     * @covers Argon\Event\EventTrait::fire
-     * @covers Argon\Event\EventTrait::getListeners
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
      */
     public function testListenersOfSamePriorityAreCalledInTheOrderTheyAreDefined()
     {
@@ -66,16 +66,16 @@ final class EventManagerTest extends TestCase
         }, 20);
         
         $this->expectOutputString('This is a event handler!');
-        $this->event->fire('event');
+        $this->event->trigger('event');
 
-        $this->event->removeAllListeners('event');
+        $this->event->off('event');
     }
 
     /**
-     * @covers Argon\Event\EventTrait::removeAllListeners
+     * @covers Argon\Event\EventTrait::off
      * @covers Argon\Event\EventTrait::on
-     * @covers Argon\Event\EventTrait::fire
-     * @covers Argon\Event\EventTrait::getListeners
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
      */
     public function testListenersOfDifferentPriorityAreSortedByTheirPriorityFromLowToHigh()
     {
@@ -90,9 +90,9 @@ final class EventManagerTest extends TestCase
         }, 30);
         
         $this->expectOutputString('This is a event handler!');
-        $this->event->fire('event');
+        $this->event->trigger('event');
 
-        $this->event->removeAllListeners('event');
+        $this->event->off('event');
     }
 
     // Used for testing with testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
@@ -100,16 +100,16 @@ final class EventManagerTest extends TestCase
     {
     }
 
-    /**
-     * @covers Argon\Event\EventTrait::on
-     * @covers Argon\Event\Exception\InvalidHandler
-     * @covers Argon\Event\EventTrait::isStatic
-     */
-    public function testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
-    {
-        $this->expectException(InvalidHandler::class);
-        $this->event->on('event', [__CLASS__, 'onEvent']);
-    }
+    // /**
+    //  * @covers Argon\Event\EventTrait::on
+    //  * @covers Argon\Event\Exception\InvalidHandler
+    //  * @covers Argon\Event\EventTrait::isStatic
+    //  */
+    // public function testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
+    // {
+    //     $this->expectException(InvalidHandler::class);
+    //     $this->event->on('event', [__CLASS__, 'onEvent']);
+    // }
 
 
     /**
@@ -118,14 +118,14 @@ final class EventManagerTest extends TestCase
      */
     public function testUsingANonCallableHandlerGeneratesAnException()
     {
-        $this->expectException(InvalidHandler::class);
+        $this->expectException(TypeError::class);
         $this->event->on('event', 'abc');
     }
 
     /**
      * @covers Argon\Event\EventTrait::on
-     * @covers Argon\Event\EventTrait::fire
-     * @covers Argon\Event\EventTrait::getListeners
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
      */
     public function testReturningFalseFromAnEventHandlerStopsTheExecutionOfOtherListeners()
     {
@@ -137,6 +137,26 @@ final class EventManagerTest extends TestCase
         $this->event->on('event', function() {
             echo 'B';
         });
-        $this->event->fire('event');
+        $this->event->trigger('event');
+    }
+
+    /**
+     * @covers Argon\Event\EventTrait::on
+     * @covers Argon\Event\EventTrait::one
+     * @covers Argon\Event\EventTrait::off
+     * @covers Argon\Event\EventTrait::trigger
+     * @covers Argon\Event\EventTrait::listeners
+     */
+    public function testEventHandlerRegisteredWithOneMethodRunsOnlyOnce()
+    {
+        $this->expectOutputString('ABB');
+        $this->event->one('event', function() {
+            echo 'A';
+        });
+        $this->event->on('event', function() {
+            echo 'B';
+        });
+        $this->event->trigger('event');
+        $this->event->trigger('event');
     }
 }

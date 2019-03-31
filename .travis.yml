@@ -3,7 +3,7 @@ env:
     - CC_TEST_REPORTER_ID=774a8491e0b1063ad73d91fa3417b14ec2fdc7df9e314baeaaf7974b620f9f05  
 language: php
 php:
-  - '7.2'
+  - '7.2.15'
 
 before_script:
   - composer install --no-interaction
