@@ -13,6 +13,15 @@ final class EventManagerTest extends TestCase
 
     public function setUp() : void
     {
+        // Set the error reporting to something similar used in production, 
+        // it is necessary in order to test the method:
+        //
+        // testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
+    	//
+    	// In production enviroment, this warning will not show but PHP will not 
+    	// stop you from calling a non-static method in a static context. 
+    	// This is not allowed, and should be pointed out!
+        error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
         $this->event = new EventManager;
     }
 
@@ -100,16 +109,16 @@ final class EventManagerTest extends TestCase
     {
     }
 
-    // /**
-    //  * @covers Argon\Event\EventTrait::on
-    //  * @covers Argon\Event\Exception\InvalidHandler
-    //  * @covers Argon\Event\EventTrait::isStatic
-    //  */
-    // public function testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
-    // {
-    //     $this->expectException(InvalidHandler::class);
-    //     $this->event->on('event', [__CLASS__, 'onEvent']);
-    // }
+     /**
+      * @covers Argon\Event\EventTrait::on
+      * @covers Argon\Event\Exception\InvalidHandler
+      * @covers Argon\Event\EventTrait::isStatic
+      */
+     public function testUsingANonStaticEventHandlerAsIfItWasStaticGeneratesAnException()
+     {
+         $this->expectException(InvalidHandler::class);
+         $this->event->on('event', [__CLASS__, 'onEvent']);
+     }
 
 
     /**
